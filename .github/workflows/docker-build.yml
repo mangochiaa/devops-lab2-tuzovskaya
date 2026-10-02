@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - develop
 
 jobs:
   build-and-push:
@@ -27,7 +28,12 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/my-flask-app:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/my-flask-app:${{ github.ref_name }}
 
-      - name: Deploy
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
         run: echo "Deploying to production server..."
+
+      - name: Deploy to development
+        if: github.ref == 'refs/heads/develop'
+        run: echo "Deploying to development server..."
